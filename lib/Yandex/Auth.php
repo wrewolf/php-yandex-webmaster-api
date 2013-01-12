@@ -12,13 +12,18 @@ class Auth
     /**
      * @var \Buzz\Browser
      */
-    protected $buzz;
+    protected $httpClient;
 
-    public function __construct($clientId, $clientSecret, \Buzz\Browser $buzz)
+    public function __construct($clientId, $clientSecret, \Buzz\Browser $httpClient)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        $this->buzz = $buzz;
+        $this->httpClient = $httpClient;
+    }
+
+    public function getHttpClient()
+    {
+        return $this->httpClient;
     }
 
     public function getAuthUrl($responseType = 'code', $popup = false, $state = null)
@@ -49,7 +54,7 @@ class Auth
             . '&code=' . $code
             . '&client_id=' . $this->clientId
             . '&client_secret=' . $this->clientSecret;
-        $response = $this->buzz->post($url, array(), $content);
+        $response = $this->httpClient->post($url, array(), $content);
         if (200 != $response->getStatusCode()) {
             throw new ErrorException('Request error');
         }
