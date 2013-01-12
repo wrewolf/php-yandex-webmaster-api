@@ -1,0 +1,27 @@
+{
+    "name": "evercodelab/yandex-webmaster-api",
+    "type": "library",
+    "description": "Yandex Webmaster API client",
+    "homepage": "https://github.com/EvercodeLab/php-yandex-webmaster-api.git",
+    "keywords": ["yandex", "webmaster", "api", "wrapper"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Evercode Lab",
+            "homepage": "http://evercodelab.com"
+        },
+        {
+            "name": "Roman Lapin",
+            "email": "roman.lapin@gmail.com",
+            "homepage": "http://victimofbabylon.com/"
+        }
+    ],
+    "require": {
+        "php":                ">=5.3.2",
+        "ext-curl":           "*",
+        "kriswallsmith/buzz": ">=0.7"
+    },
+    "autoload": {
+        "psr-0": { "Yandex\\Webmaster": "lib/" }
+    }
+}

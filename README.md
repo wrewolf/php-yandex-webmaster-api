@@ -1,0 +1,1 @@
+# PHP Yandex Webmaster API
