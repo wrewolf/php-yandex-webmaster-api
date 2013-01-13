@@ -23,7 +23,9 @@ class Token
     {
         $this->token = $data->access_token;
         $this->expires_at = new \DateTime('@' . (time() + $data->expires_in));
-        $this->type = $data->token_type;
+        if (isset($data->token_type)) {
+            $this->type = $data->token_type;
+        }
     }
 
     /**

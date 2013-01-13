@@ -41,8 +41,10 @@ class AuthTest extends \PHPUnit_Framework_TestCase
             ;
 
         $auth = new Auth('test', 'test', $httpClient);
-        $tokenData = $auth->getAuthToken($code);
-        $this->assertEquals($tokenData->access_token, 'ea135929105c4f29a0f5117d2960926f');
+        $token = $auth->getAuthToken($code);
+
+        $this->assertInstanceOf('\Yandex\Auth\Token', $token);
+        $this->assertEquals($token->getToken(), 'ea135929105c4f29a0f5117d2960926f');
     }
 
     public function getAuthCode()
