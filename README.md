@@ -6,7 +6,7 @@ A PHP5 wrapper for [Yandex Webmaster API](http://api.yandex.ru/webmaster/).
 
 ## Installation
 
-Easiest way to install `php-yandex-webmaster-api` is to use [Composer](http://getcomposer.org).
+The easiest way to install `php-yandex-webmaster-api` is to use [Composer](http://getcomposer.org).
 
 To install composer run:
 
