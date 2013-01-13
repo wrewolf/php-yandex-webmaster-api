@@ -2,6 +2,7 @@
 namespace Yandex;
 
 use Yandex\Exception\ErrorException;
+use Yandex\Auth\Token;
 
 class Auth
 {
@@ -21,11 +22,22 @@ class Auth
         $this->httpClient = $httpClient;
     }
 
+    /**
+     * @return \Buzz\Browser
+     */
     public function getHttpClient()
     {
         return $this->httpClient;
     }
 
+    /**
+     * @param string $responseType
+     * @param bool $popup
+     * @param null $state
+     *
+     * @return string
+     * @throws \InvalidArgumentException
+     */
     public function getAuthUrl($responseType = 'code', $popup = false, $state = null)
     {
         if (!in_array($responseType, array('token', 'code'))) {
@@ -46,6 +58,9 @@ class Auth
      * TODO: basic http auth implementation
      *
      * @param $code
+     *
+     * @return \Yandex\Auth\Token
+     * @throws Exception\ErrorException
      */
     public function getAuthToken($code)
     {
@@ -62,6 +77,9 @@ class Auth
         if (null == $data) {
             throw new ErrorException('Invalid token data');
         }
-        return $data;
+        if (! empty($data->error)) {
+            throw new ErrorException($data->error);
+        }
+        return new Token($data);
     }
 }
