@@ -6,6 +6,9 @@ use Yandex\Auth\Token;
 
 class Auth
 {
+    const RESPONSE_TYPE_CODE = 'code';
+    const RESPONSE_TYPE_TOKEN = 'token';
+
     protected $clientId;
 
     protected $clientSecret;
@@ -38,9 +41,9 @@ class Auth
      * @return string
      * @throws \InvalidArgumentException
      */
-    public function getAuthUrl($responseType = 'code', $popup = false, $state = null)
+    public function getAuthUrl($responseType = self::RESPONSE_TYPE_CODE, $popup = false, $state = null)
     {
-        if (!in_array($responseType, array('token', 'code'))) {
+        if (!in_array($responseType, array(self::RESPONSE_TYPE_TOKEN, self::RESPONSE_TYPE_CODE))) {
             throw new \InvalidArgumentException('Invalid value for response_type');
         }
         $url = 'https://oauth.yandex.ru/authorize?response_type=' . $responseType . '&client_id=' . $this->clientId;
