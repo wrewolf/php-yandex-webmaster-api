@@ -29,11 +29,6 @@ class Webmaster
     protected $latestResponse;
 
     /**
-     * @var \Symfony\Component\DomCrawler\Crawler
-     */
-    protected $crawler;
-
-    /**
      * @var \Buzz\Browser
      */
     protected $buzz;
@@ -43,8 +38,6 @@ class Webmaster
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->buzz = $buzz;
-
-        $this->crawler = new Crawler();
     }
 
 
@@ -89,15 +82,13 @@ class Webmaster
 
     public function getUid()
     {
+        $url = 'https://webmaster.yandex.ru/api/me';
+        $this->buzz->getClient()->setMaxRedirects(0);
+        $this->latestResponse = $this->request($url);
+        $parts = explode('/', $this->latestResponse->getHeader('location'));
+        $this->uid = end($parts);
         if (empty($this->uid)) {
-            $url = 'https://webmaster.yandex.ru/api/me';
-            $this->buzz->getClient()->setMaxRedirects(0);
-            $this->latestResponse = $this->request($url);
-            $parts = explode('/', $this->latestResponse->getHeader('location'));
-            $this->uid = end($parts);
-            if (empty($this->uid)) {
-                throw new ErrorException('UID was not resolved');
-            }
+            throw new ErrorException('UID was not resolved');
         }
         return $this->uid;
     }
@@ -107,12 +98,11 @@ class Webmaster
         $url = 'https://webmaster.yandex.ru/api/' . $this->getUid();
         $this->latestResponse = $this->request($url);
 
-        $this->crawler->addXmlContent($this->latestResponse->getContent());
-        $hostListUrl = $this->crawler->filter('collection')->attr('href');
+        $xml = new \SimpleXMLElement($this->latestResponse->getContent());
+        $hostListUrl = (string) $xml->workspace->collection['href'];
         if (empty($hostListUrl)) {
             throw new ErrorException('Host list url was not resolved');
         }
-        $this->crawler->clear();
         return $hostListUrl;
     }
 
@@ -129,9 +119,12 @@ class Webmaster
     public function getHostResourcesLinks($url)
     {
         $this->latestResponse = $this->request($url);
-        $this->crawler->addXmlContent($this->latestResponse->getContent());
+        $xml = new \SimpleXMLElement($this->latestResponse->getContent());
+        $links = array();
+        foreach ($xml->link as $link) {
+            $links[] = (string) $link['href'];
+        }
 
-        $links = $this->crawler->filter('link')->extract('href');
         $namedLinks = array();
         foreach ($links as $link) {
             $parts = explode('/', $link);
@@ -139,7 +132,6 @@ class Webmaster
             $namedLinks[$resource] = $link;
         }
 
-        $this->crawler->clear();
         return $namedLinks;
     }
 

@@ -34,7 +34,6 @@ Wrapper is currently under development and by no means could not be claimed stab
 * Add more tests
 * Add documentation and usage examples
 * Abstract HttpClient
-* remove dependancy on `symfony/dom-crawler`?
 * add caching?
 * symfony bundle will follow
 
