@@ -4,34 +4,10 @@ namespace Yandex;
 use Yandex\Exception\ErrorException;
 use Yandex\Auth\Token;
 
-class Auth
+class Auth extends ClientAbstract
 {
     const RESPONSE_TYPE_CODE = 'code';
     const RESPONSE_TYPE_TOKEN = 'token';
-
-    protected $clientId;
-
-    protected $clientSecret;
-
-    /**
-     * @var \Buzz\Browser
-     */
-    protected $httpClient;
-
-    public function __construct($clientId, $clientSecret, \Buzz\Browser $httpClient)
-    {
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
-        $this->httpClient = $httpClient;
-    }
-
-    /**
-     * @return \Buzz\Browser
-     */
-    public function getHttpClient()
-    {
-        return $this->httpClient;
-    }
 
     /**
      * @param string $responseType
@@ -72,11 +48,11 @@ class Auth
             . '&code=' . $code
             . '&client_id=' . $this->clientId
             . '&client_secret=' . $this->clientSecret;
-        $response = $this->httpClient->post($url, array(), $content);
-        if (200 != $response->getStatusCode()) {
+        $this->latestReponse = $this->httpClient->post($url, array(), $content);
+        if (200 != $this->latestReponse->getStatusCode()) {
             throw new ErrorException('Request error');
         }
-        $data = json_decode($response->getContent());
+        $data = json_decode($this->latestReponse->getContent());
         if (null == $data) {
             throw new ErrorException('Invalid token data');
         }

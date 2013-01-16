@@ -5,7 +5,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Yandex\Exception\ErrorException;
 
-class Webmaster
+class Webmaster extends ClientAbstract
 {
 
     const RESOURCE_STATS = 'stats';
@@ -15,32 +15,17 @@ class Webmaster
     const RESOURCE_LINKS = 'links';
     const RESOURCE_TOPS = 'tops';
 
-    protected $clientId;
-
-    protected $clientSecret;
-
+    /**
+     * User token
+     * @var string
+     */
     protected $token;
 
+    /**
+     * user id
+     * @var string
+     */
     protected $uid;
-
-    /**
-     * @var \Buzz\Message\Response
-     */
-    protected $latestResponse;
-
-    /**
-     * @var \Buzz\Browser
-     */
-    protected $buzz;
-
-    public function __construct($clientId, $clientSecret, \Buzz\Browser $buzz)
-    {
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
-        $this->buzz = $buzz;
-    }
-
-
 
     /**
      * Set auth token for current user
@@ -61,7 +46,7 @@ class Webmaster
      */
     protected function request($url)
     {
-        $response = $this->buzz->get($url, array(
+        $response = $this->httpClient->get($url, array(
             'Authorization' => 'OAuth ' . $this->token,
         ));
         // TODO: add proper status code handling
@@ -83,7 +68,7 @@ class Webmaster
     public function getUid()
     {
         $url = 'https://webmaster.yandex.ru/api/me';
-        $this->buzz->getClient()->setMaxRedirects(0);
+        $this->httpClient->getClient()->setMaxRedirects(0);
         $this->latestResponse = $this->request($url);
         $parts = explode('/', $this->latestResponse->getHeader('location'));
         $this->uid = end($parts);
