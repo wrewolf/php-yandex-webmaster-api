@@ -26,7 +26,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
     {
         $response = new Response();
         $response->setContent('{"access_token": "ea135929105c4f29a0f5117d2960926f", "expires_in": 2592000}');
-        $response->setHeaders(array('HTTP1.1 200 OK'));
+        $response->setHeaders(array('HTTP/1.1 200 OK'));
 
         $httpClient = $this->getHttpClientMock();
         $httpClient
@@ -76,7 +76,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function getHttpClientMock()
+    private function getHttpClientMock()
     {
         return $this->getMock('Buzz\Browser');
     }

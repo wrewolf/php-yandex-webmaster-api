@@ -38,17 +38,35 @@ class Webmaster extends ClientAbstract
     }
 
     /**
+     * Get auth token for current user
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
      * send API request with OAuth token attached in headers
      *
      * @param $url
      *
      * @return \Buzz\Response
      */
-    protected function request($url)
+    protected function request($url, $type = 'get', $content = null)
     {
-        $response = $this->httpClient->get($url, array(
+        if (empty($this->token)) {
+            throw new ErrorException('You must set user token first');
+        }
+        $authHeader = array(
             'Authorization' => 'OAuth ' . $this->token,
-        ));
+        );
+        if ($type == 'post') {
+            $response = $this->httpClient->post($url, $authHeader, $content);
+        } else {
+            $response = $this->httpClient->get($url, $authHeader);
+        }
         // TODO: add proper status code handling
         if (!in_array($response->getStatusCode(), array(200, 302))) {
             throw new ErrorException('Request error');
@@ -78,9 +96,12 @@ class Webmaster extends ClientAbstract
         return $this->uid;
     }
 
-    public function getHostListUrl()
+    public function getHostListUrl($uid = null)
     {
-        $url = 'https://webmaster.yandex.ru/api/' . $this->getUid();
+        if (empty($uid)) {
+            $uid = $this->getUid();
+        }
+        $url = 'https://webmaster.yandex.ru/api/' . $uid;
         $this->latestResponse = $this->request($url);
 
         $xml = new \SimpleXMLElement($this->latestResponse->getContent());
@@ -124,6 +145,11 @@ class Webmaster extends ClientAbstract
     {
         $this->latestResponse = $this->request($url);
         return new \SimpleXMLElement($this->latestResponse->getContent());
+    }
+
+    public function addHost()
+    {
+
     }
 
 }
