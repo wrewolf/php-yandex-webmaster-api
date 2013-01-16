@@ -36,7 +36,7 @@ class WebmasterTest extends \PHPUnit_Framework_TestCase
     {
         $response = new Response();
         $response->setHeaders(array(
-            'HTTP/1.1 200 OK',
+            'HTTP/1.1 302 OK',
             'Location: https://webmaster.yandex.ru/api/123456789'
         ));
 
@@ -95,6 +95,30 @@ class WebmasterTest extends \PHPUnit_Framework_TestCase
         $url = $webmaster->getHostListUrl(123456789);
 
         $this->assertEquals($url, 'https://webmaster.yandex.ru/api/123456789/hosts');
+    }
+
+    /**
+     * @test
+     */
+    public function testGetHostList()
+    {
+
+    }
+
+    /**
+     * @test
+     */
+    public function testGetHostResourcesLinks()
+    {
+
+    }
+
+    /**
+     * @test
+     */
+    public function testGetHostStats()
+    {
+
     }
 
     private function getHttpClientMock()

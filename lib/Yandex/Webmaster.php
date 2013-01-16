@@ -68,9 +68,6 @@ class Webmaster extends ClientAbstract
             $response = $this->httpClient->get($url, $authHeader);
         }
         // TODO: add proper status code handling
-        if (!in_array($response->getStatusCode(), array(200, 302))) {
-            throw new ErrorException('Request error');
-        }
         return $response;
     }
 
@@ -88,6 +85,9 @@ class Webmaster extends ClientAbstract
         $url = 'https://webmaster.yandex.ru/api/me';
         $this->httpClient->getClient()->setMaxRedirects(0);
         $this->latestResponse = $this->request($url);
+        if ($this->latestResponse->getStatusCode() != 302) {
+            throw new ErrorException('Request error');
+        }
         $parts = explode('/', $this->latestResponse->getHeader('location'));
         $this->uid = end($parts);
         if (empty($this->uid)) {
@@ -103,6 +103,9 @@ class Webmaster extends ClientAbstract
         }
         $url = 'https://webmaster.yandex.ru/api/' . $uid;
         $this->latestResponse = $this->request($url);
+        if ($this->latestResponse->getStatusCode() != 200) {
+            throw new ErrorException('Request error');
+        }
 
         $xml = new \SimpleXMLElement($this->latestResponse->getContent());
         $hostListUrl = (string) $xml->workspace->collection['href'];
@@ -119,12 +122,20 @@ class Webmaster extends ClientAbstract
         }
 
         $this->latestResponse = $this->request($url);
+        if ($this->latestResponse->getStatusCode() != 200) {
+            throw new ErrorException('Request error');
+        }
+
         return new \SimpleXMLElement($this->latestResponse->getContent());
     }
 
     public function getHostResourcesLinks($url)
     {
         $this->latestResponse = $this->request($url);
+        if ($this->latestResponse->getStatusCode() != 200) {
+            throw new ErrorException('Request error');
+        }
+
         $xml = new \SimpleXMLElement($this->latestResponse->getContent());
         $links = array();
         foreach ($xml->link as $link) {
@@ -144,12 +155,30 @@ class Webmaster extends ClientAbstract
     public function getHostStats($url)
     {
         $this->latestResponse = $this->request($url);
+        if ($this->latestResponse->getStatusCode() != 200) {
+            throw new ErrorException('Request error');
+        }
+
         return new \SimpleXMLElement($this->latestResponse->getContent());
     }
 
-    public function addHost()
+    /**
+     * @param $name
+     *
+     * @return string Host url
+     * @throws Exception\ErrorException
+     */
+    public function addHost($name)
     {
-
+        $url = $this->getHostListUrl();
+        $content = '<host>
+          <name>' . $name . '</name>
+        </host>';
+        $this->latestReponse = $this->request($url, 'post', $content);
+        if ($this->latestResponse->getStatusCode() != 201) {
+            throw new ErrorException('Request error');
+        }
+        return $this->latestResponse->getHeader('location');
     }
 
 }
