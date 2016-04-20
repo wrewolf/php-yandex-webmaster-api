@@ -1,11 +1,15 @@
 {
-    "name": "evercodelab/yawa",
+    "name": "wrewolf/yawa",
     "type": "library",
     "description": "Yandex Webmaster API client",
-    "homepage": "https://github.com/EvercodeLab/php-yandex-webmaster-api.git",
+    "homepage": "https://github.com/wrewolf/yawa.git",
     "keywords": ["yandex", "webmaster", "api", "wrapper"],
     "license": "MIT",
     "authors": [
+        {
+            "name": "Alexey Andreyanov",
+            "homepage": "https://wrewolf.com"
+        },
         {
             "name": "Evercode Lab",
             "homepage": "http://evercodelab.com"
