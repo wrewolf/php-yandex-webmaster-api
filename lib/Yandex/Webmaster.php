@@ -54,7 +54,7 @@ class Webmaster extends ClientAbstract
      *
      * @return \Buzz\Response
      */
-    protected function request($url, $type = 'get', $content = null)
+    public function request($url, $type = 'get', $content = null)
     {
         if (empty($this->token)) {
             throw new ErrorException('You must set user token first');
